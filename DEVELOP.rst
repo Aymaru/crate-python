@@ -5,22 +5,17 @@ Developer Guide
 Setup
 =====
 
-This project uses buildout_ to set up the development environment.
+Create a virtualenv and install the project::
 
-To start things off, run::
-
-    $ python bootstrap.py
-
-Then, run::
-
-    $ ./bin/buildout -N
+    $ python3 -m venv venv
+    $ venv/bin/python -m pip install -U -e ".[test]"
 
 Running Tests
 =============
 
 The tests are run using the zope.testrunner_::
 
-    $ ./bin/test
+    $ zope-testrunner --auto-color --test-path src
 
 This will run all tests using the Python interpreter that was used to
 bootstrap buildout.
@@ -74,13 +69,17 @@ Next:
 PyPI Deployment
 ---------------
 
+Firstly, install the deployment dependencies::
+
+    $ pip install -U -e ".[deploy]"
+
 To create the package use::
 
-    $ bin/py setup.py sdist bdist_wheel
+    $ python setup.py sdist bdist_wheel
 
 Then, use twine_ to upload the package to PyPI_::
 
-    $ bin/twine upload dist/*
+    $ twine upload dist/*
 
 For this to work, you will need a personal PyPI account that is set up as a project admin.
 
@@ -122,6 +121,10 @@ The docs live under the ``docs`` directory.
 
 The docs are written written with ReStructuredText_ and processed with Sphinx_.
 
+Firstly, install the documentation dependencies::
+
+    $ pip install -U -e ".[docs]"
+    
 Build the docs by running::
 
     $ bin/sphinx

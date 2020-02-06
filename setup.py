@@ -67,8 +67,23 @@ setup(
         ]
     },
     extras_require=dict(
-        test=['zope.testing',
-              'zc.customdoctests>=1.0.1'],
+        test=[
+            'zope.testing',
+            'zc.customdoctests>=1.0.1',
+            'zope.testrunner==4.4.3',
+            'SQLAlchemy===1.2.0',
+            'zope.interface==4.1.1',
+            'zope.exceptions==4.0.7',
+            'six==1.11.0',
+            'urllib3==1.9.1'
+            ],
+        deploy=[
+            'twine==1.8.1'
+        ],
+        docs=[
+            'Sphinx==1.2.3',
+            'crate-docs-theme==0.5.0'
+        ],
         sqlalchemy=['sqlalchemy>=1.0,<1.3']
     ),
     python_requires='>=3.4',
