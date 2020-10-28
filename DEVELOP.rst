@@ -40,6 +40,15 @@ To run against a single interpreter, you can also do::
 listening on the default CrateDB transport port to avoid side effects with the
 test layer.
 
+In order to run the tests on other operating systems than Linux, invoke::
+
+    ./bin/test-quick
+
+This will skip some tests currently not working on macOS. It can also be used
+to speed up the tests, because the tests for testing the test layer will also
+be skipped.
+
+
 Preparing a Release
 ===================
 
