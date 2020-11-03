@@ -63,6 +63,6 @@ jobs:
             test_program=bin/test-quick
           fi
           if [[ ${{ matrix.os }} = "windows-latest" ]]; then
-            test_program=bin\\test-quick
+            test_program=D:\\a\\crate-python\\crate-python\\bin\\test-quick
           fi
           bin/coverage run $test_program -vv1
