@@ -64,6 +64,6 @@ jobs:
           if [[ ${{ matrix.os }} = "macos-latest" ]]; then
             bin/coverage run bin/test-quick -vv1
           fi
-          if [[ ${{ matrix.os }} = "windows-latest" ]]; then
+          if [[ ${{ matrix.os }} = "windows-latest" && ${{ matrix.sqla-version }} != "1.1.18" ]]; then
             bin/test-quick -vv1
           fi
