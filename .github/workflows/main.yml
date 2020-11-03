@@ -65,8 +65,13 @@ jobs:
             bin/coverage run bin/test-quick -vv1
           fi
           if [[ ${{ matrix.os }} = "windows-latest" && ${{ matrix.sqla-version }} = "1.3.20" ]]; then
+
             # Disable firewall.
             netsh advfirewall set allprofiles state off
+
+            # Reset IP stack.
+            netsh winsock reset
+
             # Run tests.
             bin/test-quick -vv1
           fi
