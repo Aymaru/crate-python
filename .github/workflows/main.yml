@@ -58,11 +58,12 @@ jobs:
         run: |
           bin/flake8
 
-          test_program=bin/test
+          if [[ ${{ matrix.os }} = "ubuntu-latest" ]]; then
+            bin/coverage run bin/test -vv1
+          fi
           if [[ ${{ matrix.os }} = "macos-latest" ]]; then
-            test_program=bin/test-quick
+            bin/coverage run bin/test-quick -vv1
           fi
           if [[ ${{ matrix.os }} = "windows-latest" ]]; then
-            test_program=bin/test-quick.exe
+            bin/test-quick -vv1
           fi
-          bin/coverage run $test_program -vv1
