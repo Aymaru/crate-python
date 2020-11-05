@@ -23,6 +23,8 @@ from __future__ import absolute_import
 
 import json
 import os
+import pathlib
+import sys
 import unittest
 import doctest
 from pprint import pprint
@@ -143,7 +145,11 @@ def setUpWithCrateLayer(test):
             cursor.execute(stmt)
             assert cursor.fetchall()[0][0] == 1
 
+        # Compute path to file for data loading.
         data_path = docs_path('testing/testdata/data/test_a.json')
+        if sys.platform == 'win32':
+            data_path = pathlib.PureWindowsPath(data_path).as_uri()
+
         # load testing data into crate
         cursor.execute("copy locations from ?", (data_path,))
         # refresh location table so imported data is visible immediately
