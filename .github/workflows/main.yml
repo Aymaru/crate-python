@@ -32,6 +32,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
+        if: matrix.python-version != '3.5' || matrix.sqla-version != '1.4.0b1'
         run: |
           python -m pip install --upgrade pip
           python bootstrap.py
@@ -51,6 +52,7 @@ jobs:
           bin/buildout -n -c base.cfg
 
       - name: Test
+        if: matrix.python-version != '3.5' || matrix.sqla-version != '1.4.0b1'
         run: |
           bin/flake8
           bin/coverage run bin/test -vv1
