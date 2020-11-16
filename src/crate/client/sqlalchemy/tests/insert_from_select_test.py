@@ -87,3 +87,22 @@ class SqlAlchemyInsertFromSelectTest(TestCase):
             "INSERT INTO characters_archive (name, age) (SELECT characters.name, characters.age FROM characters WHERE characters.status = ?)",
             ins
         )
+
+    @patch('crate.client.connection.Cursor', FakeCursor)
+    def test_insert_from_select_triggered_1_0_1(self):
+
+        self.engine.dialect.server_version_info = (1, 0, 1)
+
+        char = self.character(name='Arthur', status='Archived')
+        self.session.add(char)
+        self.session.commit()
+
+        sel = select([self.character.name, self.character.age]).where(self.character.status == "Archived")
+        ins = insert(self.character_archived).from_select(['name', 'age'], sel)
+
+        self.session.execute(ins)
+        self.session.commit()
+        self.assertSQL(
+            "INSERT INTO characters_archive (name, age) SELECT characters.name, characters.age FROM characters WHERE characters.status = ?",
+            ins
+        )

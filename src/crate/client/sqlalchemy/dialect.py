@@ -21,6 +21,15 @@
 
 import logging
 from datetime import datetime, date
+from distutils.version import LooseVersion
+
+# FIXME: Workaround to be able to use SQLAlchemy 1.4.
+#        Caveat: This purges the ``cresultproxy`` extension
+#        at runtime, so it will impose a speed bump.
+from .sa_version import SA_VERSION, SA_1_4
+from .monkey import sqlalchemy_without_cresultproxy
+if SA_VERSION >= SA_1_4:
+    sqlalchemy_without_cresultproxy()
 
 from sqlalchemy import types as sqltypes
 from sqlalchemy.engine import default, reflection
