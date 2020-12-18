@@ -36,6 +36,7 @@ from .types import Object, ObjectArray
 
 SCHEMA_MIN_VERSION = (0, 57, 0)
 TABLE_TYPE_MIN_VERSION = (2, 0, 0)
+SCHEMA_KEY_COLUMN_USAGE_MIN_VERSION = (2, 3, 0)
 
 TYPES_MAP = {
     "boolean": sqltypes.Boolean,
@@ -173,10 +174,15 @@ class CrateDialect(default.DefaultDialect):
         # start with _. Adding it here causes sqlalchemy to quote such columns
         self.identifier_preparer.illegal_initial_characters.add('_')
 
+        self.server_version_info = None
+
     def initialize(self, connection):
+
         # get lowest server version
-        self.server_version_info = \
-            self._get_server_version_info(connection)
+        if self.server_version_info is None:
+            self.server_version_info = \
+                self._get_server_version_info(connection)
+
         # get default schema name
         self.default_schema_name = \
             self._get_default_schema_name(connection)
@@ -194,6 +200,9 @@ class CrateDialect(default.DefaultDialect):
             server = '{0}:{1}'.format(host, port or '4200')
         if 'servers' in kwargs:
             server = kwargs.pop('servers')
+        if 'cratedb-version' in kwargs:
+            forced_version = LooseVersion(kwargs.pop('cratedb-version'))
+            self.server_version_info = tuple(forced_version.version)
         if server:
             return self.dbapi.connect(servers=server, **kwargs)
         return self.dbapi.connect(**kwargs)
@@ -254,7 +263,7 @@ class CrateDialect(default.DefaultDialect):
 
     @reflection.cache
     def get_pk_constraint(self, engine, table_name, schema=None, **kw):
-        if self.server_version_info >= (2, 3, 0):
+        if self.server_version_info >= SCHEMA_KEY_COLUMN_USAGE_MIN_VERSION:
             query = """SELECT column_name
                     FROM information_schema.key_column_usage
                     WHERE table_name = ? AND table_catalog = ?"""

@@ -40,7 +40,8 @@ FakeCursor.return_value = fake_cursor
 class SqlAlchemyDictTypeTest(TestCase):
 
     def setUp(self):
-        self.engine = sa.create_engine('crate://')
+        # Need to set an appropriate server version.
+        self.engine = sa.create_engine('crate:///?cratedb-version=4.3.2')
         metadata = sa.MetaData()
         self.mytable = sa.Table('mytable', metadata,
                                 sa.Column('name', sa.String),

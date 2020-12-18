@@ -19,6 +19,7 @@
 # with Crate these terms will supersede the license and you may use the
 # software solely pursuant to the terms of the relevant commercial agreement.
 
+import unittest
 from datetime import datetime
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -30,6 +31,7 @@ from sqlalchemy import select, insert
 
 from crate.client.cursor import Cursor
 
+from crate.client.sqlalchemy.sa_version import SA_VERSION, SA_1_4
 
 fake_cursor = MagicMock(name='fake_cursor')
 fake_cursor.rowcount = 1
@@ -66,14 +68,19 @@ class SqlAlchemyInsertFromSelectTest(TestCase):
         self.character_archived = CharacterArchive
         self.session = Session()
 
+    @unittest.skipIf(SA_VERSION >= SA_1_4, "Not supported on SQLAlchemy >= 1.4")
     @patch('crate.client.connection.Cursor', FakeCursor)
-    def test_insert_from_select_triggered(self):
+    def test_insert_from_select_triggered_1_0_0(self):
+
+        self.engine.dialect.server_version_info = (1, 0, 0)
+
         char = self.character(name='Arthur', status='Archived')
         self.session.add(char)
         self.session.commit()
 
         sel = select([self.character.name, self.character.age]).where(self.character.status == "Archived")
         ins = insert(self.character_archived).from_select(['name', 'age'], sel)
+
         self.session.execute(ins)
         self.session.commit()
         self.assertSQL(
